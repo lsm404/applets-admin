@@ -114,7 +114,7 @@
                   clearable
                 />
                 <n-upload
-                  action="http://127.0.0.1:8088/api/upload/image"
+                  action="http://120.46.28.146:8088/api/upload/image"
                   :headers="{ Authorization: `Bearer ${getToken()}` }"
                   name="image"
                   :show-file-list="false"
@@ -234,6 +234,7 @@
   } from 'naive-ui';
   import { Add, CloudUpload, Close } from '@vicons/ionicons5';
   import { getToolsApi, addToolApi, updateToolApi, deleteToolApi } from '../../api/tools';
+  import apiConfig from '../../config/api';
 
   const message = useMessage();
   const dialog = useDialog();

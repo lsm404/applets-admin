@@ -2,12 +2,12 @@
  * @Author: lishengmin shengminfang@foxmail.com
  * @Date: 2025-01-01 00:00:00
  * @LastEditors: lishengmin shengminfang@foxmail.com
- * @LastEditTime: 2025-01-01 00:00:00
+ * @LastEditTime: 2025-06-12 10:28:11
  * @FilePath: /applet/applet-admin/src/api/tools.ts
  * @Description: 工具管理API接口
  */
 
-const API_BASE = 'http://127.0.0.1:8088';
+const API_BASE = '/api';
 
 /**
  * @description: 获取工具列表
