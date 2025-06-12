@@ -4,11 +4,13 @@
 import { GLOB_CONFIG_FILE_NAME, OUTPUT_DIR } from '../constant';
 import fs, { writeFileSync } from 'fs-extra';
 import chalk from 'chalk';
+import { createRequire } from 'module';
 
 import { getRootPath, getEnvConfig } from '../utils';
 import { getConfigFileName } from '../getConfigFileName';
 
-import pkg from '../../package.json';
+const require = createRequire(import.meta.url);
+const pkg = require('../../package.json');
 
 function createConfig(
   {

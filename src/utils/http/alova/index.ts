@@ -23,7 +23,7 @@ export const Alova = createAlova({
     const token = userStore.getToken;
     // 添加 token 到请求头
     if (!method.meta?.ignoreToken && token) {
-      method.config.headers['token'] = token;
+      method.config.headers['Authorization'] = `Bearer ${token}`;
     }
     // 处理 api 请求前缀
     const isUrlStr = isUrl(method.url as string);
@@ -81,7 +81,6 @@ export const Alova = createAlova({
     },
   },
 });
-
 
 // 项目，多个不同 api 地址，可导出多个实例
 // export const AlovaTwo = createAlova({

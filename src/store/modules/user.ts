@@ -63,32 +63,48 @@ export const useUserStore = defineStore({
     },
     // 登录
     async login(params: any) {
-      const response = await login(params);
-      const { token, code } = response;
-      if (code === ResultEnum.SUCCESS) {
+      const response: any = await login(params);
+      const { data, code, msg } = response;
+      if (code === ResultEnum.SUCCESS && data) {
         const ex = 7 * 24 * 60 * 60;
-        storage.set(ACCESS_TOKEN,token, ex);
-        // storage.set(CURRENT_USER, result, ex);
+        // 从API响应的data中获取token和管理员信息
+        const { token, admin } = data;
+        storage.set(ACCESS_TOKEN, token, ex);
+        storage.set(CURRENT_USER, admin, ex);
         storage.set(IS_SCREENLOCKED, false);
         this.setToken(token);
-        // this.setUserInfo(result);
+        this.setUserInfo({
+          username: admin.username,
+          email: admin.email || '',
+        });
+        // 设置权限
+        if (admin.permissions && admin.permissions.length) {
+          this.setPermissions(admin.permissions);
+        }
       }
-      return response;
+      return { code, message: msg };
     },
 
-    // 获取用户信息
+    // 获取管理员信息
     async getInfo() {
-      const data = await getUserInfoApi();
-      const { result } = data;
-      if (result.permissions && result.permissions.length) {
-        const permissionsList = result.permissions;
-        this.setPermissions(permissionsList);
-        this.setUserInfo(result);
+      const response: any = await getUserInfoApi();
+      const { data, code } = response;
+      if (code === ResultEnum.SUCCESS && data) {
+        if (data.permissions && data.permissions.length) {
+          const permissionsList = data.permissions;
+          this.setPermissions(permissionsList);
+          this.setUserInfo({
+            username: data.username,
+            email: data.email || '',
+          });
+        } else {
+          throw new Error('getInfo: permissionsList must be a non-null array !');
+        }
+        this.setAvatar(data.avatar || '');
+        return data;
       } else {
-        throw new Error('getInfo: permissionsList must be a non-null array !');
+        throw new Error('获取管理员信息失败');
       }
-      this.setAvatar(result.avatar);
-      return result;
     },
 
     // 登出
