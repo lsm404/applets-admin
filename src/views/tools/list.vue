@@ -75,7 +75,7 @@
               placeholder="请输入工具名称"
             />
           </n-form-item>
-          <n-form-item label="工具描述" path="desc">
+          <n-form-item label="描述" path="desc">
             <n-input
               :value="formData.desc"
               @update:value="(val) => (formData.desc = val)"
@@ -114,7 +114,7 @@
                   clearable
                 />
                 <n-upload
-                  action="http://120.46.28.146:8088/api/upload/image"
+                  :action="config.utils.getUploadUrl()"
                   :headers="{ Authorization: `Bearer ${getToken()}` }"
                   name="image"
                   :show-file-list="false"
@@ -234,7 +234,7 @@
   } from 'naive-ui';
   import { Add, CloudUpload, Close } from '@vicons/ionicons5';
   import { getToolsApi, addToolApi, updateToolApi, deleteToolApi } from '../../api/tools';
-  import apiConfig from '../../config/api';
+  import config from '../../config/index';
 
   const message = useMessage();
   const dialog = useDialog();
@@ -285,7 +285,7 @@
 
   const formRules = {
     title: [{ required: true, message: '请输入工具名称', trigger: 'blur' }],
-    desc: [{ required: true, message: '请输入工具描述', trigger: 'blur' }],
+    desc: [{ message: '请输入工具描述', trigger: 'blur' }],
     link: [{ required: true, message: '请输入下载链接', trigger: 'blur' }],
     category: [
       {
@@ -350,7 +350,7 @@
       },
     },
     { title: '工具名称', key: 'title', width: 150 },
-    { title: '描述', key: 'desc', ellipsis: { tooltip: true } },
+    { title: '描述', key: 'desc', ellipsis: { tooltip: false } },
     { title: '文件大小', key: 'size', width: 100 },
     { title: '版本', key: 'version', width: 100 },
     {

@@ -38,12 +38,52 @@ export const Alova = createAlova({
     onSuccess: async (response, method) => {
       const res = (response.json && (await response.json())) || response.body;
 
+      // 先检查token过期，即使是原生响应也要处理
+      const { code, message } = res;
+      if (code === 912) {
+        // @ts-ignore
+        const Modal = window.$dialog;
+        const LoginPath = PageEnum.BASE_LOGIN;
+
+        // 立即清除token
+        storage.clear();
+
+        Modal?.warning({
+          title: '提示',
+          content: '登录身份已失效，请重新登录!',
+          okText: '确定',
+          closable: false,
+          maskClosable: false,
+          onOk: () => {
+            console.log('onOk被调用了！');
+            window.location.href = LoginPath;
+          },
+          onClose: () => {
+            console.log('onClose被调用了！');
+            window.location.href = LoginPath;
+          },
+          onAfterHide: () => {
+            console.log('onAfterHide被调用了！');
+            window.location.href = LoginPath;
+          },
+        });
+
+        // 兜底：3秒后自动跳转
+        setTimeout(() => {
+          console.log('兜底跳转');
+          window.location.href = LoginPath;
+        }, 3000);
+
+        throw new Error('登录身份已失效');
+      }
+
       // 是否返回原生响应头 比如：需要获取响应头时使用该属性
       if (method.meta?.isReturnNativeResponse) {
         return res;
       }
+
       // 请根据自身情况修改数据结构
-      const { message, code, result } = res;
+      const { result } = res;
 
       // 不进行任何处理，直接返回
       // 用于需要直接获取 code、result、 message 这些信息时开启
