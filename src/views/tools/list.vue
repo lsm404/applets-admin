@@ -42,7 +42,9 @@
         :row-props="() => ({ style: 'height: 100px;' })"
         :scroll-x="1200"
         :single-line="true"
+        remote
         @update:page="handlePageChange"
+        @update:page-size="handlePageSizeChange"
       />
     </n-card>
 
@@ -234,6 +236,7 @@
   } from 'naive-ui';
   import { Add, CloudUpload, Close } from '@vicons/ionicons5';
   import { getToolsApi, addToolApi, updateToolApi, deleteToolApi } from '../../api/tools';
+  import { getCategoriesApi } from '../../api/categories';
   import config from '../../config/index';
 
   const message = useMessage();
@@ -265,16 +268,16 @@
   const pagination = reactive({
     page: 1,
     pageSize: 10,
-    total: 0,
+    itemCount: 0,
     showSizePicker: true,
+    pageSizes: [10, 20, 30, 50],
+    showQuickJumper: true,
+    prefix({ itemCount }) {
+      return `共 ${itemCount} 条`;
+    },
   });
 
-  const categoryOptions = [
-    { label: '全部/近期更新', value: 0 },
-    { label: '实用软件', value: 1 },
-    { label: '影视音乐', value: 2 },
-    { label: '漫画小说', value: 3 },
-  ];
+  const categoryOptions = ref([{ label: '全部/近期更新', value: 0 }]);
 
   const iconClassOptions = [
     { label: 'camera', value: 'camera' },
@@ -306,7 +309,15 @@
   };
 
   const columns = [
-    { title: 'ID', key: 'id', width: 80, fixed: 'left' },
+    {
+      title: '序号',
+      key: 'index',
+      width: 80,
+      fixed: 'left',
+      render: (row, index) => {
+        return (pagination.page - 1) * pagination.pageSize + index + 1;
+      },
+    },
     {
       title: '图标',
       key: 'iconPath',
@@ -358,7 +369,10 @@
       key: 'category',
       width: 120,
       render: (row) => {
-        const category = categoryOptions.find((item) => item.value === row.category);
+        // 先尝试通过值查找
+        let category = categoryOptions.value.find((item) => item.value === row.category);
+
+        // 如果找不到，返回"未知"
         return category ? category.label : '未知';
       },
     },
@@ -431,8 +445,17 @@
 
       if (response && response.code === 200) {
         dataList.value = Array.isArray(response.data) ? response.data : [];
-        pagination.total = response.count || 0;
-        console.log('数据列表:', dataList.value, '总数:', pagination.total);
+        pagination.itemCount = response.count || 0;
+        console.log('数据列表:', dataList.value, '总数:', pagination.itemCount);
+        console.log('完整分页对象:', JSON.stringify(pagination));
+        console.log(
+          '当前页:',
+          pagination.page,
+          '每页条数:',
+          pagination.pageSize,
+          '总页数:',
+          Math.ceil(pagination.itemCount / pagination.pageSize)
+        );
       } else {
         message.error(response?.msg || '获取数据失败');
         console.error('API错误:', response);
@@ -462,6 +485,12 @@
     getToolsList();
   };
 
+  const handlePageSizeChange = (pageSize: number) => {
+    pagination.page = 1;
+    pagination.pageSize = pageSize;
+    getToolsList();
+  };
+
   const handleAdd = () => {
     // 重置表单数据
     formData.id = null;
@@ -480,6 +509,15 @@
 
   const testModal = () => {
     console.log('测试弹窗，当前showModal值:', showModal.value);
+    // 测试分类选项列表
+    console.log('当前分类选项:', JSON.stringify(categoryOptions.value));
+    // 检查是否有重复的标签
+    const labels = categoryOptions.value.map((opt) => opt.label);
+    const uniqueLabels = [...new Set(labels)];
+    console.log('唯一的标签列表:', uniqueLabels);
+    console.log('是否有重复标签:', labels.length !== uniqueLabels.length);
+
+    // 显示弹窗
     showModal.value = true;
     console.log('设置后showModal值:', showModal.value);
   };
@@ -613,8 +651,40 @@
     }
   };
 
+  // 获取分类选项列表
+  const getCategoryOptions = async () => {
+    try {
+      // 使用options接口来获取分类选项
+      const response = await getCategoriesApi({ path: 'options' });
+      console.log('获取分类选项响应:', response);
+
+      if (response && response.code === 200 && response.data) {
+        const apiOptions = response.data;
+        console.log('API返回的分类选项:', apiOptions);
+
+        // 检查API返回的选项中是否已包含"全部/近期更新"
+        const hasDefaultOption = apiOptions.some((opt) => opt.label === '全部/近期更新');
+        console.log('是否已包含默认选项:', hasDefaultOption);
+
+        if (!hasDefaultOption) {
+          // 如果API返回的数据中不包含"全部/近期更新"，则添加默认选项
+          const defaultOption = { label: '全部/近期更新', value: 0 };
+          categoryOptions.value = [defaultOption, ...apiOptions];
+          console.log('添加默认选项后的选项列表:', categoryOptions.value);
+        } else {
+          // API已经包含了默认选项，直接使用API返回的数据
+          categoryOptions.value = apiOptions;
+          console.log('使用API返回的选项列表:', categoryOptions.value);
+        }
+      }
+    } catch (error) {
+      console.error('获取分类选项失败:', error);
+    }
+  };
+
   onMounted(() => {
     getToolsList();
+    getCategoryOptions();
   });
 </script>
 
