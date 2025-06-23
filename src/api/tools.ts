@@ -2,93 +2,95 @@
  * @Author: lishengmin shengminfang@foxmail.com
  * @Date: 2025-01-01 00:00:00
  * @LastEditors: lishengmin shengminfang@foxmail.com
- * @LastEditTime: 2025-06-12 10:28:11
+ * @LastEditTime: 2025-06-23 16:24:29
  * @FilePath: /applet/applet-admin/src/api/tools.ts
  * @Description: 工具管理API接口
  */
 
-const API_BASE = '/api';
+import { Alova } from '@/utils/http/alova/index';
 
 /**
  * @description: 获取工具列表
  */
-export async function getToolsApi(params?: any) {
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${API_BASE}/api/tools${queryString ? `?${queryString}` : ''}`;
-  const response = await fetch(url);
-  return await response.json();
+export function getToolsApi(params?: any) {
+  return Alova.Get<InResult>('/tools', {
+    params,
+    meta: {
+      isReturnNativeResponse: true,
+    },
+  });
 }
 
 /**
  * @description: 获取工具详情
  */
-export async function getToolDetailApi(id: number) {
-  const response = await fetch(`${API_BASE}/api/tools/${id}`);
-  return await response.json();
+export function getToolDetailApi(id: number) {
+  return Alova.Get<InResult>(`/tools/${id}`, {
+    meta: {
+      isReturnNativeResponse: true,
+    },
+  });
 }
 
 /**
  * @description: 添加工具
  */
-export async function addToolApi(params: any) {
-  const response = await fetch(`${API_BASE}/api/tools`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+export function addToolApi(params: any) {
+  return Alova.Post<InResult>('/tools', params, {
+    meta: {
+      isReturnNativeResponse: true,
     },
-    body: JSON.stringify(params),
   });
-  return await response.json();
 }
 
 /**
  * @description: 更新工具
  */
-export async function updateToolApi(params: any) {
-  const response = await fetch(`${API_BASE}/api/tools/${params.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
+export function updateToolApi(params: any) {
+  return Alova.Put<InResult>(`/tools/${params.id}`, params, {
+    meta: {
+      isReturnNativeResponse: true,
     },
-    body: JSON.stringify(params),
   });
-  return await response.json();
 }
 
 /**
  * @description: 删除工具
  */
-export async function deleteToolApi(id: number) {
-  const response = await fetch(`${API_BASE}/api/tools/${id}`, {
-    method: 'DELETE',
+export function deleteToolApi(id: number) {
+  return Alova.Delete<InResult>(`/tools/${id}`, {
+    meta: {
+      isReturnNativeResponse: true,
+    },
   });
-  return await response.json();
 }
 
 /**
  * @description: 批量删除工具
  */
-export async function batchDeleteToolApi(ids: number[]) {
-  const response = await fetch(`${API_BASE}/api/tools/batch-delete`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ ids }),
-  });
-  return await response.json();
+export function batchDeleteToolApi(ids: number[]) {
+  return Alova.Post<InResult>(
+    '/tools/batch-delete',
+    { ids },
+    {
+      meta: {
+        isReturnNativeResponse: true,
+      },
+    }
+  );
 }
 
 /**
  * @description: 切换工具状态
  */
-export async function toggleToolStatusApi(id: number, status: number) {
-  const response = await fetch(`${API_BASE}/api/tools/${id}/status`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ status }),
-  });
-  return await response.json();
+export function toggleToolStatusApi(id: number, status: number) {
+  return Alova.Patch<InResult>(
+    `/tools/${id}/status`,
+    { status },
+    {
+      meta: {
+        isReturnNativeResponse: true,
+      },
+    }
+  );
 }

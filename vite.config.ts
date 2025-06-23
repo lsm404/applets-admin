@@ -1,3 +1,11 @@
+/*
+ * @Author: lishengmin shengminfang@foxmail.com
+ * @Date: 2024-10-10 14:39:35
+ * @LastEditors: lishengmin shengminfang@foxmail.com
+ * @LastEditTime: 2025-06-23 15:38:43
+ * @FilePath: /applet/applet-admin/vite.config.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import type { UserConfig, ConfigEnv } from 'vite';
 import { loadEnv } from 'vite';
 import { resolve } from 'path';
@@ -51,7 +59,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       host: true,
       port: VITE_PORT,
       proxy: createProxy(VITE_PROXY),
-      open: true
+      open: true,
     },
     optimizeDeps: {
       include: [],

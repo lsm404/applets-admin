@@ -54,7 +54,7 @@
               登录
             </n-button>
           </n-form-item>
-          <n-form-item class="default-color">
+          <!-- <n-form-item class="default-color">
             <div class="flex view-account-other">
               <div class="flex-initial">
                 <span>其它登录方式</span>
@@ -77,7 +77,7 @@
                 <a href="javascript:">注册账号</a>
               </div>
             </div>
-          </n-form-item>
+          </n-form-item> -->
         </n-form>
       </div>
     </div>
