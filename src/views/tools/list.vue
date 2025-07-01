@@ -640,7 +640,8 @@
       if (response && response.code === 200) {
         message.success(isEdit ? '更新成功' : '添加成功');
         showModal.value = false;
-        getToolsList();
+        // 保存成功后刷新列表
+        await getToolsList();
       } else {
         message.error(response?.msg || '保存失败');
         console.error('保存失败，API返回:', response);

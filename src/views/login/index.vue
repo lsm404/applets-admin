@@ -3,10 +3,13 @@
     <div class="view-account-header"></div>
     <div class="view-account-container">
       <div class="view-account-top">
-        <div class="view-account-top-logo">
-          <img :src="websiteConfig.loginImage" alt="" />
+        <div class="view-account-header">
+          <div class="view-account-top-logo">
+            <img :src="websiteConfig.loginImage" alt="贴心小助手" />
+          </div>
+          <div class="view-account-top-desc">{{ websiteConfig.title }}</div>
         </div>
-        <div class="view-account-top-desc">{{ websiteConfig.loginDesc }}</div>
+        <div class="subtitle">{{ websiteConfig.loginDesc }}</div>
       </div>
       <div class="view-account-form">
         <n-form
@@ -161,22 +164,122 @@
     flex-direction: column;
     height: 100vh;
     overflow: auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/><circle cx="900" cy="800" r="80" fill="url(%23a)"/></svg>')
+        center/cover;
+      pointer-events: none;
+    }
 
     &-container {
       flex: 1;
       padding: 32px 12px;
-      max-width: 384px;
+      max-width: 400px;
       min-width: 320px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
     }
 
     &-top {
-      padding: 32px 0;
+      padding: 0 0 40px 0;
       text-align: center;
 
+      .view-account-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+
+      &-logo {
+        margin-right: 12px;
+
+        img {
+          width: 48px;
+          height: 48px;
+          object-fit: contain;
+          border-radius: 12px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+
       &-desc {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0;
+        letter-spacing: 0.5px;
+      }
+
+      // 添加一个副标题样式
+      .subtitle {
         font-size: 14px;
-        color: #808695;
+        color: #666;
+        margin-bottom: 0;
+      }
+    }
+
+    &-form {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      .n-form-item {
+        margin-bottom: 24px;
+      }
+
+      .n-input {
+        border-radius: 12px;
+        border: 1px solid #e8e8f0;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #36ad6a;
+        }
+
+        &:focus-within {
+          border-color: #36ad6a;
+          box-shadow: 0 0 0 2px rgba(54, 173, 106, 0.1);
+        }
+      }
+
+      .n-button {
+        border-radius: 12px;
+        height: 48px;
+        font-size: 16px;
+        font-weight: 500;
+        background: linear-gradient(135deg, #36ad6a, #2d8cf0);
+        border: none;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(54, 173, 106, 0.4);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
       }
     }
 
@@ -189,6 +292,16 @@
 
       .ant-checkbox-wrapper {
         color: #515a6e;
+      }
+
+      a {
+        color: #36ad6a;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #2d8cf0;
+        }
       }
     }
   }

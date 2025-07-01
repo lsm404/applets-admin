@@ -36,11 +36,11 @@ interface Config {
 const configs: Record<'development' | 'production', Config> = {
   development: {
     api: {
-      baseURL: '/api', // 开发环境走代理
-      timeout: 10000,
+      baseURL: 'https://www.jialeya.xyz/api',
+      timeout: 15000,
     },
     upload: {
-      url: 'http://120.46.28.146:8088/api/upload/image', // 开发环境走代理
+      url: 'https://www.jialeya.xyz/api/upload/image',
       maxSize: 5 * 1024 * 1024,
       allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
     },
@@ -52,11 +52,11 @@ const configs: Record<'development' | 'production', Config> = {
 
   production: {
     api: {
-      baseURL: 'http://120.46.28.146:8088/api',
+      baseURL: 'https://www.jialeya.xyz/api',
       timeout: 15000,
     },
     upload: {
-      url: 'http://120.46.28.146:8088/api/upload/image',
+      url: 'https://www.jialeya.xyz/api/upload/image',
       maxSize: 5 * 1024 * 1024,
       allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
     },
@@ -96,7 +96,7 @@ export const utils = {
     const baseUrl =
       currentEnv === 'development'
         ? 'http://127.0.0.1:8088' // 开发环境本地
-        : 'http://120.46.28.146:8088'; // 生产环境线上
+        : 'https://www.jialeya.xyz'; // 生产环境线上
 
     return `${baseUrl}/uploads/images/${imagePath}`;
   },
