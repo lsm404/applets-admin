@@ -16,6 +16,8 @@ export const Alova = createAlova({
   statesHook: VueHook,
   // 在开发环境开启缓存命中日志
   cacheLogger: process.env.NODE_ENV === 'development',
+  // 全局禁用缓存
+  cacheFor: 0,
   // requestAdapter: mockAdapter,
   requestAdapter: adapterFetch(),
   beforeRequest(method) {

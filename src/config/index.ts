@@ -45,7 +45,7 @@ const configs: Record<'development' | 'production', Config> = {
       allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
     },
     app: {
-      title: '工具管理系统 - 开发环境',
+      title: '商品管理系统 - 开发环境',
       version: '1.0.0-dev',
     },
   },
@@ -61,7 +61,7 @@ const configs: Record<'development' | 'production', Config> = {
       allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
     },
     app: {
-      title: '工具管理系统',
+      title: '商品管理系统',
       version: '1.0.0',
     },
   },
@@ -71,7 +71,7 @@ const configs: Record<'development' | 'production', Config> = {
 const currentEnv = getEnvironment();
 const config = configs[currentEnv];
 
-// 工具方法
+// 商品方法
 export const utils = {
   // 获取完整API URL
   getApiUrl: (path: string): string => {

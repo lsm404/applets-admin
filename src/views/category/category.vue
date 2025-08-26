@@ -381,7 +381,7 @@
   const handleDelete = (row) => {
     dialog.warning({
       title: '确认删除',
-      content: `确定要删除分类 "${row.name}" 吗？此操作不可撤销，且如果该分类下有关联的工具，将无法删除。`,
+      content: `确定要删除分类 "${row.name}" 吗？此操作不可撤销，且如果该分类下有关联的商品，将无法删除。`,
       positiveText: '删除',
       negativeText: '取消',
       onPositiveClick: async () => {

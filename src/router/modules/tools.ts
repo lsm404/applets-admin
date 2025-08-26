@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/tools/list',
     component: Layout,
     meta: {
-      title: '工具管理',
+      title: '商品管理',
       icon: renderIcon(ConstructOutline),
       sort: 1,
     },
@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
         path: 'list',
         name: 'tools_list',
         meta: {
-          title: '工具列表',
+          title: '商品列表',
         },
         component: () => import('@/views/tools/list.vue'),
       },

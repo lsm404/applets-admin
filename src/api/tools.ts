@@ -2,7 +2,7 @@
  * @Author: lishengmin shengminfang@foxmail.com
  * @Date: 2025-01-01 00:00:00
  * @LastEditors: lishengmin shengminfang@foxmail.com
- * @LastEditTime: 2025-06-23 16:24:29
+ * @LastEditTime: 2025-08-26 10:27:53
  * @FilePath: /applet/applet-admin/src/api/tools.ts
  * @Description: 工具管理API接口
  */
@@ -18,6 +18,11 @@ export function getToolsApi(params?: any) {
     meta: {
       isReturnNativeResponse: true,
     },
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
   });
 }
 
@@ -29,6 +34,11 @@ export function getToolDetailApi(id: number) {
     meta: {
       isReturnNativeResponse: true,
     },
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
   });
 }
 
@@ -39,6 +49,11 @@ export function addToolApi(params: any) {
   return Alova.Post<InResult>('/tools', params, {
     meta: {
       isReturnNativeResponse: true,
+    },
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
     },
   });
 }

@@ -1,15 +1,22 @@
+<!--
+ * @Author: lishengmin shengminfang@foxmail.com
+ * @Date: 2025-06-12 11:40:25
+ * @LastEditors: lishengmin shengminfang@foxmail.com
+ * @LastEditTime: 2025-08-26 10:40:24
+ * @FilePath: /applet-admin/src/views/tools/list.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="tools-container">
-    <n-card title="工具管理" :bordered="false" size="small">
+    <n-card title="商品管理" :bordered="false" size="small">
       <template #header-extra>
         <n-space>
           <n-button type="primary" @click="handleAdd">
             <template #icon>
               <n-icon><Add /></n-icon>
             </template>
-            添加工具
+            添加商品
           </n-button>
-          <n-button type="info" @click="testModal">测试弹窗</n-button>
         </n-space>
       </template>
 
@@ -17,7 +24,7 @@
         <n-space>
           <n-input
             v-model="searchForm.name"
-            placeholder="工具名称"
+            placeholder="商品名称"
             clearable
             style="width: 200px"
           />
@@ -57,7 +64,7 @@
     >
       <n-card
         style="width: 600px"
-        :title="formData.id ? '编辑工具' : '添加工具'"
+        :title="formData.id ? '编辑商品' : '添加商品'"
         :bordered="false"
         size="huge"
         role="dialog"
@@ -70,11 +77,11 @@
           label-placement="left"
           :label-width="100"
         >
-          <n-form-item label="工具名称" path="title">
+          <n-form-item label="商品名称" path="title">
             <n-input
               :value="formData.title"
               @update:value="(val) => (formData.title = val)"
-              placeholder="请输入工具名称"
+              placeholder="请输入商品名称"
             />
           </n-form-item>
           <n-form-item label="描述" path="desc">
@@ -82,7 +89,7 @@
               :value="formData.desc"
               @update:value="(val) => (formData.desc = val)"
               type="textarea"
-              placeholder="请输入工具描述"
+              placeholder="请输入商品描述"
             />
           </n-form-item>
           <n-form-item label="文件大小" path="size">
@@ -173,6 +180,144 @@
               </div>
             </n-space>
           </n-form-item>
+          <n-form-item label="轮播图片" path="images">
+            <n-space vertical style="width: 100%">
+              <div style="display: flex; align-items: center; margin-bottom: 8px">
+                <span style="color: #666; font-size: 12px; margin-right: 12px"
+                  >支持多选上传（最多5张），用于轮播展示</span
+                >
+                <n-upload
+                  :action="config.utils.getUploadUrl() + 's'"
+                  :headers="{ Authorization: `Bearer ${getToken()}` }"
+                  name="images"
+                  multiple
+                  :max="5"
+                  :show-file-list="false"
+                  accept="image/*"
+                  @finish="handleCarouselImageUploadFinish"
+                  @error="handleCarouselImageUploadError"
+                >
+                  <n-button type="primary" size="small" secondary>
+                    <template #icon>
+                      <n-icon><CloudUpload /></n-icon>
+                    </template>
+                    添加图片
+                  </n-button>
+                </n-upload>
+              </div>
+
+              <!-- 轮播图片列表 -->
+              <div
+                v-if="formData.images && formData.images.length > 0"
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                  gap: 12px;
+                  padding: 12px;
+                  border: 1px solid #e0e0e0;
+                  border-radius: 6px;
+                  background: #fafafa;
+                "
+              >
+                <div
+                  v-for="(image, index) in formData.images"
+                  :key="index"
+                  style="
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 8px;
+                    background: white;
+                    border-radius: 6px;
+                    border: 1px solid #d9d9d9;
+                  "
+                >
+                  <n-image
+                    :src="image"
+                    :alt="`轮播图片${index + 1}`"
+                    width="80"
+                    height="80"
+                    object-fit="cover"
+                    style="border-radius: 4px"
+                    fallback-src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRkFGQUZBIi8+CjxwYXRoIGQ9Ik00MCA1Nkw0MCAyNE00MCAyNEwzMiAzMk00MCAyNEw0OCAzMiIgc3Ryb2tlPSIjQzNDM0MzIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K"
+                  />
+                  <div style="font-size: 10px; color: #666; margin-top: 4px; text-align: center">
+                    图片 {{ index + 1 }}
+                  </div>
+
+                  <!-- 操作按钮 -->
+                  <div style="position: absolute; top: 4px; right: 4px; display: flex; gap: 4px">
+                    <!-- 向左移动 -->
+                    <n-button
+                      v-if="index > 0"
+                      size="tiny"
+                      type="info"
+                      quaternary
+                      circle
+                      @click="moveCarouselImage(index, index - 1)"
+                      style="width: 20px; height: 20px; background: rgba(255, 255, 255, 0.9)"
+                    >
+                      <template #icon>
+                        <n-icon size="12">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                          </svg>
+                        </n-icon>
+                      </template>
+                    </n-button>
+
+                    <!-- 向右移动 -->
+                    <n-button
+                      v-if="index < formData.images.length - 1"
+                      size="tiny"
+                      type="info"
+                      quaternary
+                      circle
+                      @click="moveCarouselImage(index, index + 1)"
+                      style="width: 20px; height: 20px; background: rgba(255, 255, 255, 0.9)"
+                    >
+                      <template #icon>
+                        <n-icon size="12">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                          </svg>
+                        </n-icon>
+                      </template>
+                    </n-button>
+
+                    <!-- 删除按钮 -->
+                    <n-button
+                      size="tiny"
+                      type="error"
+                      quaternary
+                      circle
+                      @click="removeCarouselImage(index)"
+                      style="width: 20px; height: 20px; background: rgba(255, 255, 255, 0.9)"
+                    >
+                      <template #icon>
+                        <n-icon size="12"><Close /></n-icon>
+                      </template>
+                    </n-button>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-else
+                style="
+                  padding: 20px;
+                  text-align: center;
+                  color: #999;
+                  border: 1px dashed #d9d9d9;
+                  border-radius: 6px;
+                  background: #fafafa;
+                "
+              >
+                暂无轮播图片，点击"添加图片"按钮上传
+              </div>
+            </n-space>
+          </n-form-item>
           <n-form-item label="图标类名" path="iconClass">
             <n-select
               :value="formData.iconClass"
@@ -252,7 +397,19 @@
     category: null,
   });
 
-  const formData = reactive({
+  const formData = reactive<{
+    id: null | number;
+    title: string;
+    desc: string;
+    size: string;
+    version: string;
+    iconClass: string;
+    iconPath: string;
+    link: string;
+    category: number;
+    status: number;
+    images: string[];
+  }>({
     id: null,
     title: '',
     desc: '',
@@ -263,6 +420,7 @@
     link: '',
     category: 0,
     status: 1,
+    images: [], // 轮播图片数组
   });
 
   const pagination = reactive({
@@ -287,8 +445,8 @@
   ];
 
   const formRules = {
-    title: [{ required: true, message: '请输入工具名称', trigger: 'blur' }],
-    desc: [{ message: '请输入工具描述', trigger: 'blur' }],
+    title: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+    desc: [{ message: '请输入商品描述', trigger: 'blur' }],
     link: [{ required: true, message: '请输入下载链接', trigger: 'blur' }],
     category: [
       {
@@ -314,7 +472,7 @@
       key: 'index',
       width: 80,
       fixed: 'left',
-      render: (row, index) => {
+      render: (_row, index) => {
         return (pagination.page - 1) * pagination.pageSize + index + 1;
       },
     },
@@ -345,7 +503,7 @@
         }
         return h(NImage, {
           src: row.iconPath,
-          alt: row.title || '工具图标',
+          alt: row.title || '商品图标',
           width: 80,
           height: 80,
           objectFit: 'cover',
@@ -360,7 +518,81 @@
         });
       },
     },
-    { title: '工具名称', key: 'title', width: 150 },
+    { title: '商品名称', key: 'title', width: 150 },
+    {
+      title: '轮播图',
+      key: 'images',
+      width: 120,
+      render: (row) => {
+        if (!row.images || !Array.isArray(row.images) || row.images.length === 0) {
+          return h(
+            'div',
+            {
+              style: {
+                color: '#999',
+                fontSize: '12px',
+              },
+            },
+            '无轮播图'
+          );
+        }
+
+        return h(
+          'div',
+          {
+            style: {
+              display: 'flex',
+              gap: '4px',
+              flexWrap: 'wrap',
+            },
+          },
+          row.images
+            .slice(0, 3)
+            .map((image, index) =>
+              h(NImage, {
+                key: index,
+                src: image,
+                alt: `轮播图${index + 1}`,
+                width: 30,
+                height: 30,
+                objectFit: 'cover',
+                previewDisabled: false,
+                style: {
+                  borderRadius: '4px',
+                  border: '1px solid #e0e0e0',
+                  cursor: 'pointer',
+                },
+                fallbackSrc:
+                  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMwIiBoZWlnaHQ9IjMwIiBmaWxsPSIjRkFGQUZBIi8+CjxwYXRoIGQ9Ik0xNSAyMUwxNSA5TTE1IDlMMTIgMTJNMTUgOUwxOCAxMiIgc3Ryb2tlPSIjQzNDM0MzIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K',
+              })
+            )
+            .concat(
+              row.images.length > 3
+                ? [
+                    h(
+                      'div',
+                      {
+                        style: {
+                          width: '30px',
+                          height: '30px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#f5f5f5',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          color: '#666',
+                          fontSize: '10px',
+                        },
+                      },
+                      `+${row.images.length - 3}`
+                    ),
+                  ]
+                : []
+            )
+        );
+      },
+    },
     { title: '描述', key: 'desc', ellipsis: { tooltip: false } },
     { title: '文件大小', key: 'size', width: 100 },
     { title: '版本', key: 'version', width: 100 },
@@ -439,29 +671,17 @@
       if (searchForm.category !== null && searchForm.category !== undefined) {
         params.category = searchForm.category;
       }
-
       const response = await getToolsApi(params);
-      console.log('API响应:', response); // 调试用
 
       if (response && response.code === 200) {
         dataList.value = Array.isArray(response.data) ? response.data : [];
         pagination.itemCount = response.count || 0;
-        console.log('数据列表:', dataList.value, '总数:', pagination.itemCount);
-        console.log('完整分页对象:', JSON.stringify(pagination));
-        console.log(
-          '当前页:',
-          pagination.page,
-          '每页条数:',
-          pagination.pageSize,
-          '总页数:',
-          Math.ceil(pagination.itemCount / pagination.pageSize)
-        );
       } else {
-        message.error(response?.msg || '获取数据失败');
+        message.error(response?.message || '获取数据失败');
         console.error('API错误:', response);
       }
     } catch (error) {
-      message.error('获取工具列表失败');
+      message.error('获取商品列表失败');
       console.error('请求错误:', error);
     } finally {
       loading.value = false;
@@ -503,37 +723,8 @@
     formData.link = '';
     formData.category = 0;
     formData.status = 1;
+    formData.images = [];
 
-    showModal.value = true;
-  };
-
-  const testModal = () => {
-    console.log('测试弹窗，当前showModal值:', showModal.value);
-    // 测试分类选项列表
-    console.log('当前分类选项:', JSON.stringify(categoryOptions.value));
-    // 检查是否有重复的标签
-    const labels = categoryOptions.value.map((opt) => opt.label);
-    const uniqueLabels = [...new Set(labels)];
-    console.log('唯一的标签列表:', uniqueLabels);
-    console.log('是否有重复标签:', labels.length !== uniqueLabels.length);
-
-    // 显示弹窗
-    showModal.value = true;
-    console.log('设置后showModal值:', showModal.value);
-  };
-
-  const testFormData = () => {
-    console.log('测试表单数据');
-    // 手动设置一些测试数据
-    formData.title = '测试工具名称';
-    formData.desc = '这是一个测试描述';
-    formData.size = '10MB';
-    formData.version = 'v1.0.0';
-    formData.link = 'https://test.com';
-    formData.category = 1;
-    formData.status = 1;
-
-    console.log('设置后的formData:', formData);
     showModal.value = true;
   };
 
@@ -543,10 +734,9 @@
   };
 
   // 处理图标上传成功
-  const handleIconUploadFinish = ({ file, event }) => {
+  const handleIconUploadFinish = ({ event }) => {
     try {
       const response = JSON.parse(event.target.response);
-      console.log('上传响应:', response);
 
       if (response.code === 200) {
         // 直接赋值并强制触发响应式更新
@@ -560,7 +750,7 @@
 
         message.success('图标上传成功');
       } else {
-        message.error(response.msg || '上传失败');
+        message.error(response.message || '上传失败');
       }
     } catch (error) {
       console.error('解析上传响应失败:', error);
@@ -569,14 +759,78 @@
   };
 
   // 处理图标上传错误
-  const handleIconUploadError = ({ file, event }) => {
+  const handleIconUploadError = ({ event }) => {
     console.error('图标上传失败:', event);
     message.error('图标上传失败，请重试');
   };
 
+  // 处理轮播图片上传成功
+  const handleCarouselImageUploadFinish = ({ event }) => {
+    try {
+      const response = JSON.parse(event.target.response);
+
+      if (response.code === 200) {
+        // 添加到轮播图片数组中
+        if (!formData.images) {
+          formData.images = [];
+        }
+
+        // 处理多文件上传响应，data是数组格式
+        if (Array.isArray(response.data)) {
+          const newImageUrls = response.data.map((file) => file.url);
+          formData.images.push(...newImageUrls);
+          message.success(`成功上传 ${response.data.length} 张轮播图片`);
+        } else {
+          // 兼容单文件上传格式
+          formData.images.push(response.data.url);
+          message.success('轮播图片上传成功');
+        }
+
+      } else {
+        console.error('上传失败，响应内容:', response);
+        message.error(response.message || response.msg || '轮播图片上传失败');
+      }
+    } catch (error) {
+      console.error('解析轮播图片上传响应失败:', error);
+      console.error('原始响应内容:', event.target.response);
+      message.error('轮播图片上传失败，请检查网络连接');
+    }
+  };
+
+  // 处理轮播图片上传错误
+  const handleCarouselImageUploadError = ({ event }) => {
+    console.error('轮播图片上传失败:', event);
+    message.error('轮播图片上传失败，请重试');
+  };
+
+  // 移动轮播图片位置
+  const moveCarouselImage = (fromIndex, toIndex) => {
+    if (
+      !formData.images ||
+      fromIndex < 0 ||
+      toIndex < 0 ||
+      fromIndex >= formData.images.length ||
+      toIndex >= formData.images.length
+    ) {
+      return;
+    }
+
+    const images = [...formData.images];
+    const [movedItem] = images.splice(fromIndex, 1);
+    images.splice(toIndex, 0, movedItem);
+    formData.images = images;
+  };
+
+  // 删除轮播图片
+  const removeCarouselImage = (index) => {
+    if (!formData.images || index < 0 || index >= formData.images.length) {
+      return;
+    }
+
+    formData.images.splice(index, 1);
+  };
+
   const handleEdit = (row) => {
-    console.log('编辑工具:', row);
-    console.log('编辑前showModal值:', showModal.value);
 
     // 逐个赋值以保持响应式
     formData.id = row.id;
@@ -589,15 +843,14 @@
     formData.link = row.link || '';
     formData.category = row.category || 0;
     formData.status = row.status || 1;
+    formData.images = row.images && Array.isArray(row.images) ? [...row.images] : [];
 
     showModal.value = true;
-    console.log('编辑后showModal值:', showModal.value);
-    console.log('表单数据:', formData);
   };
 
   const handleView = (row) => {
     dialog.info({
-      title: '工具详情',
+      title: '商品详情',
       content: `名称: ${row.title}\n描述: ${row.desc}\n大小: ${row.size}\n版本: ${row.version}\n链接: ${row.link}`,
       positiveText: '确定',
     });
@@ -606,7 +859,7 @@
   const handleDelete = (row) => {
     dialog.warning({
       title: '确认删除',
-      content: `确定要删除工具 "${row.title}" 吗？`,
+      content: `确定要删除商品 "${row.title}" 吗？`,
       positiveText: '删除',
       negativeText: '取消',
       onPositiveClick: async () => {
@@ -616,7 +869,7 @@
             message.success('删除成功');
             getToolsList();
           } else {
-            message.error(response?.msg || '删除失败');
+            message.error(response?.message || '删除失败');
           }
         } catch (error) {
           message.error('删除失败');
@@ -630,12 +883,9 @@
     try {
       await formRef.value?.validate();
 
-      console.log('保存数据:', formData);
       const isEdit = !!formData.id;
-      console.log('操作类型:', isEdit ? '编辑' : '新增');
 
       const response = isEdit ? await updateToolApi(formData) : await addToolApi(formData);
-      console.log('API响应:', response);
 
       if (response && response.code === 200) {
         message.success(isEdit ? '更新成功' : '添加成功');
@@ -643,7 +893,7 @@
         // 保存成功后刷新列表
         await getToolsList();
       } else {
-        message.error(response?.msg || '保存失败');
+        message.error(response?.message || '保存失败');
         console.error('保存失败，API返回:', response);
       }
     } catch (error) {
@@ -657,25 +907,20 @@
     try {
       // 使用options接口来获取分类选项
       const response = await getCategoriesApi({ path: 'options' });
-      console.log('获取分类选项响应:', response);
 
       if (response && response.code === 200 && response.data) {
         const apiOptions = response.data;
-        console.log('API返回的分类选项:', apiOptions);
 
         // 检查API返回的选项中是否已包含"全部/近期更新"
         const hasDefaultOption = apiOptions.some((opt) => opt.label === '全部/近期更新');
-        console.log('是否已包含默认选项:', hasDefaultOption);
 
         if (!hasDefaultOption) {
           // 如果API返回的数据中不包含"全部/近期更新"，则添加默认选项
           const defaultOption = { label: '全部/近期更新', value: 0 };
           categoryOptions.value = [defaultOption, ...apiOptions];
-          console.log('添加默认选项后的选项列表:', categoryOptions.value);
         } else {
           // API已经包含了默认选项，直接使用API返回的数据
           categoryOptions.value = apiOptions;
-          console.log('使用API返回的选项列表:', categoryOptions.value);
         }
       }
     } catch (error) {
